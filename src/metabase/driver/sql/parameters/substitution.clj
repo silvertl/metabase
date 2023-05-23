@@ -31,12 +31,7 @@
    (honeysql.types SqlCall)
    (java.time.temporal Temporal)
    (java.util UUID)
-   (metabase.driver.common.parameters
-    Date
-    DateRange
-    FieldFilter
-    ReferencedCardQuery
-    ReferencedQuerySnippet)))
+   (metabase.driver.common.parameters Date DateRange FieldFilter ReferencedCardQuery ReferencedQuerySnippet)))
 
 ;;; ------------------------------------ ->prepared-substitution & default impls -------------------------------------
 

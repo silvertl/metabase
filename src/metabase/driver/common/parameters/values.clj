@@ -60,16 +60,11 @@
 
 (def ^:private SingleValue
   "Schema for a valid *single* value for a param."
-  (s/cond-pre (s/eq params/no-value)
-              FieldFilter
-              Date
-              s/Num
-              s/Str
-              s/Bool))
+  (s/cond-pre FieldFilter Date s/Num s/Str s/Bool))
 
 (def ^:private ParsedParamValue
   "Schema for valid param value(s). Params can have one or more values."
-  (s/named (s/maybe (s/cond-pre SingleValue [SingleValue] su/Map))
+  (s/named (s/maybe (s/cond-pre (s/eq params/no-value) SingleValue [SingleValue] su/Map))
            "Valid param value(s)"))
 
 (s/defn ^:private tag-targets
@@ -258,19 +253,11 @@
     value
     ;; newer operators use vectors as their arguments even if there's only one
     (vector? value)
-    (let [parsed (mapv value->number value)]
-      (if (next parsed)
-        parsed
-        (first parsed)))
+    (u/many-or-one (mapv value->number value))
     ;; if the value is a string, then split it by commas in the string. Usually there should be none.
     ;; Parse each part as a number.
     (string? value)
-    (let [parts (mapv parse-number (str/split value #","))]
-      (if (next parts)
-        ;; If there's more than one number return the vector
-        parts
-        ;; otherwise just return the single number
-        (first parts)))))
+    (u/many-or-one (mapv parse-number (str/split value #",")))))
 
 (s/defn ^:private parse-value-for-field-type :- s/Any
   "Do special parsing for value for a (presumably textual) FieldFilter (`:type` = `:dimension`) param (i.e., attempt
