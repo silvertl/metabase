@@ -27,7 +27,7 @@
    [metabase.util.schema :as su]
    [schema.core :as s])
   (:import
-   (clojure.lang APersistentVector Keyword)
+   (clojure.lang IPersistentVector Keyword)
    (honeysql.types SqlCall)
    (java.time.temporal Temporal)
    (java.util UUID)
@@ -150,7 +150,7 @@
   [_driver this]
   {:replacement-snippet (format "CAST('%s' AS uuid)" (str this))})
 
-(defmethod ->replacement-snippet-info [:sql APersistentVector]
+(defmethod ->replacement-snippet-info [:sql IPersistentVector]
   [driver values]
   (let [values (map (partial ->replacement-snippet-info driver) values)]
     {:replacement-snippet     (str/join ", " (map :replacement-snippet values))
