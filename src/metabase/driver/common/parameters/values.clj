@@ -29,11 +29,7 @@
    (clojure.lang ExceptionInfo)
    (java.text NumberFormat)
    (java.util UUID)
-   (metabase.driver.common.parameters
-    Date
-    FieldFilter
-    ReferencedCardQuery
-    ReferencedQuerySnippet)))
+   (metabase.driver.common.parameters Date FieldFilter ReferencedCardQuery ReferencedQuerySnippet)))
 
 (set! *warn-on-reflection* true)
 
