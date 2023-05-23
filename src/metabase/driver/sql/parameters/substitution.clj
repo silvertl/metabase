@@ -133,9 +133,7 @@
 
 (defmethod ->replacement-snippet-info [:sql Keyword]
   [driver this]
-  (if (= this params/no-value)
-    {:replacement-snippet ""}
-    (create-replacement-snippet driver this)))
+  (create-replacement-snippet driver this))
 
 (defmethod ->replacement-snippet-info [:sql SqlCall]
   [driver this]
@@ -299,7 +297,7 @@
   (cond
     ;; otherwise if the value isn't present just put in something that will always be true, such as `1` (e.g. `WHERE 1
     ;; = 1`). This is only used for field filters outside of optional clauses
-    (= value params/no-value) {:replacement-snippet "1 = 1"}
+    (nil? value) {:replacement-snippet "1 = 1"}
     ;; if we have a vector of multiple values recursively convert them to SQL and combine into an `AND` clause
     ;; (This is multiple values in the sense that the frontend provided multiple maps with value values for the same
     ;; FieldFilter, not in the sense that we have a single map with multiple values for `:value`.)

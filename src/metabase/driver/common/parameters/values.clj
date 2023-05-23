@@ -60,7 +60,7 @@
 
 (def ^:private ParsedParamValue
   "Schema for valid param value(s). Params can have one or more values."
-  (s/named (s/maybe (s/cond-pre (s/eq params/no-value) SingleValue [SingleValue] su/Map))
+  (s/named (s/maybe (s/cond-pre SingleValue [SingleValue] su/Map))
            "Valid param value(s)"))
 
 (s/defn ^:private tag-targets
@@ -131,11 +131,9 @@
      (when (and (seq matching-params)
                 (every? :default matching-params))
        (normalize-params matching-params))
-     ;; otherwise there is no value for this Field filter ("dimension"), throw Exception if this param is required,
-     ;; otherwise return [[params/no-value]] to signify that
-     (if (:required tag)
-       (throw (missing-required-param-exception (:display-name tag)))
-       params/no-value))))
+     ;; otherwise there is no value for this Field filter ("dimension"). throw Exception if this param is required
+     (when (:required tag)
+       (throw (missing-required-param-exception (:display-name tag)))))))
 
 (s/defmethod parse-tag :dimension :- (s/maybe FieldFilter)
   [{field-filter :dimension, :as tag} :- mbql.s/TemplateTag
@@ -211,9 +209,8 @@
     (or (:value matching-param)
         (:default tag)
         (:default matching-param)
-        (if (:required tag)
-          (throw (missing-required-param-exception (:display-name tag)))
-          params/no-value))))
+        (when (:required tag)
+          (throw (missing-required-param-exception (:display-name tag)))))))
 
 (defmethod parse-tag :number
   [tag params]
@@ -297,9 +294,6 @@
   base type Fields as UUIDs."
   [param-type :- mbql.s/TemplateTagType value]
   (cond
-    (= value params/no-value)
-    value
-
     (= param-type :number)
     (value->number value)
 
@@ -311,13 +305,13 @@
          (= (get-in value [:value :type]) :number))
     (update-in value [:value :value] value->number)
 
-    (sequential? value)
-    (mapv (partial parse-value-for-type param-type) value)
-
     ;; Field Filters with "special" base types
     (and (= param-type :dimension)
          (get-in value [:field :base_type]))
     (update-filter-for-field-type value)
+
+    (sequential? value)
+    (mapv (partial parse-value-for-type param-type) value)
 
     :else
     value))

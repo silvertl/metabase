@@ -53,7 +53,7 @@
               [{:type :number/=, :value ["20" "40"], :target [:variable [:template-tag "number_filter"]]}]))))
 
     (testing "Unspecified value"
-      (is (= params/no-value
+      (is (= nil
              (#'params.values/value-for-tag {:name "id", :display-name "ID", :type :text} nil))))
 
     (testing "Default used"
@@ -153,7 +153,7 @@
                      :table_id      (mt/id :checkins)
                      :base_type     :type/Date
                      :semantic_type nil})
-            :value params/no-value}
+            :value nil}
            (value-for-tag
             {:name         "checkin_date"
              :display-name "Checkin Date"
@@ -263,7 +263,7 @@
                      :table_id       (mt/id :checkins)
                      :base_type      :type/Date
                      :effective_type :type/Date})
-            :value params/no-value}
+            :value nil}
            (parse-tag
             {:name         "checkin_date"
              :display-name "Checkin Date"

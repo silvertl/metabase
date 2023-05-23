@@ -170,7 +170,7 @@
                        ["[{$match: " (param :date) "}]"]))))
   (testing "parameter not supplied"
     (is (= (to-bson [{:$match {}}])
-           (substitute {:date (params/->FieldFilter {:name "date"} params/no-value)} ["[{$match: " (param :date) "}]"]))))
+           (substitute {:date (params/->FieldFilter {:name "date"} nil)} ["[{$match: " (param :date) "}]"]))))
   (testing "operators"
     (testing "string"
       (doseq [[operator form input] [[:string/starts-with {"$regex" "^foo"} ["foo"]]

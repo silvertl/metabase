@@ -31,11 +31,8 @@
   (if-not (contains? param->value k)
     [sql (conj missing k)]
     (let [v (get param->value k)]
-      (cond
-        (= params/no-value v)
+      (if (nil? v)
         [sql (conj missing k)]
-
-        :else
         [(str sql v) missing]))))
 
 (defn- substitute-optional [param->value [sql missing] {subclauses :args}]

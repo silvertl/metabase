@@ -32,12 +32,6 @@
            (substitute
             ["select * from foobars where bird_type = " (param "bird_type")]
             {"bird_type" "Steller's Jay"}))))
-  (testing "make sure falsey values are substituted correctly"
-    (testing "`nil` should get substituted as `NULL`"
-      (is (= ["select * from foobars where bird_type = NULL" []]
-             (substitute
-              ["select * from foobars where bird_type = " (param "bird_type")]
-              {"bird_type" nil})))))
   (testing "`false` should get substituted as `false`"
     (is (= ["select * from foobars where bird_type = FALSE" []]
            (substitute
@@ -99,7 +93,7 @@
                  (substitute query {"date" (date-field-filter-value)}))))
         (testing "param is missing"
           (is (= ["select * from checkins where 1 = 1" []]
-                 (substitute query {"date" (assoc (date-field-filter-value) :value params/no-value)}))
+                 (substitute query {"date" (assoc (date-field-filter-value) :value nil)}))
               "should be replaced with 1 = 1"))))
     (testing "optional"
       (let [query ["select * from checkins " (optional "where " (param "date"))]]
@@ -109,7 +103,7 @@
                  (substitute query {"date" (date-field-filter-value)}))))
         (testing "param is missing — should be omitted entirely"
           (is (= ["select * from checkins" nil]
-                 (substitute query {"date" (assoc (date-field-filter-value) :value params/no-value)})))))))
+                 (substitute query {"date" (assoc (date-field-filter-value) :value nil)})))))))
   (testing "new operators"
     (testing "string operators"
       (let [query ["select * from venues where " (param "param")]]
@@ -394,12 +388,6 @@
           :params []}
          (substitute-e2e "SELECT * FROM toucanneries WHERE TRUE [[AND num_toucans > {{num_toucans}}]]"
                          {"num_toucans" 5})))
-
-  (testing "make sure nil gets substitute-e2ed in as `NULL`"
-    (is (= {:query  "SELECT * FROM toucanneries WHERE TRUE AND num_toucans > NULL"
-            :params []}
-           (substitute-e2e "SELECT * FROM toucanneries WHERE TRUE [[AND num_toucans > {{num_toucans}}]]"
-                           {"num_toucans" nil}))))
 
   (is (= {:query  "SELECT * FROM toucanneries WHERE TRUE AND num_toucans > TRUE"
           :params []}

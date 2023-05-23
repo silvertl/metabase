@@ -11,8 +11,8 @@
    [metabase.util.log :as log]))
 
 (defn- substitute-field-filter [[sql args missing] in-optional? k {:keys [_field value], :as v}]
-  (if (and (= params/no-value value) in-optional?)
-    ;; no-value field filters inside optional clauses are ignored, and eventually emitted entirely
+  (if (and (nil? value) in-optional?)
+    ;; no-value field filters inside optional clauses are ignored, and eventually omitted entirely
     [sql args (conj missing k)]
     ;; otherwise no values get replaced with `1 = 1` and other values get replaced normally
     (let [{:keys [replacement-snippet prepared-statement-args]}
@@ -42,7 +42,7 @@
         (params/ReferencedQuerySnippet? v)
         (substitute-native-query-snippet [sql args missing] v)
 
-        (= params/no-value v)
+        (nil? v)
         [sql args (conj missing k)]
 
         :else

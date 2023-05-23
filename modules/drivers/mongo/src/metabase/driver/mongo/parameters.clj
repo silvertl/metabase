@@ -88,7 +88,7 @@
       (or start-condition
           end-condition))))
 
-;; Field filter value is either params/no-value (handled in `substitute-param`, a map with `:type` and `:value`, or a
+;; Field filter value is either nil (handled in `substitute-param`), a map with `:type` and `:value`, or a
 ;; sequence of those maps.
 (defn- substitute-one-field-filter [{field :field, {param-type :type, value :value} :value, :as field-filter}]
   ;; convert relative dates to approprate date range representations
@@ -123,7 +123,7 @@
       [acc (conj missing k)]
 
       (params/FieldFilter? v)
-      (let [no-value? (= (:value v) params/no-value)]
+      (let [no-value? (nil? (:value v))]
         (cond
           (params.ops/operator? (get-in v [:value :type]))
           (let [param (:value v)
@@ -155,7 +155,7 @@
       (throw (ex-info (tru "Cannot run query: MongoDB doesn''t support saved questions reference: {0}" k)
                       {:type qp.error-type/invalid-query}))
 
-      (= v params/no-value)
+      (nil? v)
       [acc (conj missing k)]
 
       :else

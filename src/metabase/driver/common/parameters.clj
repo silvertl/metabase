@@ -9,7 +9,7 @@
 ;; `field` is a Field Toucan instance
 ;;
 ;; `value`" is either:
-;; * `no-value`
+;; *  nil
 ;; *  A map contianing the value and type info for the value, e.g.
 ;;
 ;;    {:type   :date/single
@@ -72,11 +72,6 @@
   pretty/PrettyPrintable
   (pretty [_]
     (list (pretty/qualify-symbol-for-*ns* `->DateRange) start end)))
-
-(def no-value
-  "Convenience for representing an *optional* parameter present in a query but whose value is unspecified in the param
-  values."
-  ::no-value)
 
 (p.types/defrecord+ Param [k]
   pretty/PrettyPrintable
