@@ -14,10 +14,9 @@ import FormField from "metabase/core/components/FormField";
 import SelectButton from "metabase/core/components/SelectButton";
 import TippyPopoverWithTrigger from "metabase/components/PopoverWithTrigger/TippyPopoverWithTrigger";
 
-import Models from "metabase/entities/questions";
-
 import type { CardId } from "metabase-types/api";
 
+import { useQuestionQuery } from "metabase/common/hooks";
 import { PopoverItemPicker, MIN_POPOVER_WIDTH } from "./FormModelPicker.styled";
 
 export interface FormModelPickerProps extends HTMLAttributes<HTMLDivElement> {
@@ -39,6 +38,10 @@ function FormModelPicker({
   const [{ value }, { error, touched }, { setValue }] = useField(name);
   const formFieldRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(MIN_POPOVER_WIDTH);
+  const { data: model } = useQuestionQuery({
+    id: value,
+    enabled: typeof value === "number",
+  });
 
   useEffect(() => {
     const { width: formFieldWidth } =
@@ -59,11 +62,11 @@ function FormModelPicker({
         ref={formFieldRef}
       >
         <SelectButton onClick={handleShowPopover}>
-          {typeof value === "number" ? <Models.Name id={value} /> : placeholder}
+          {typeof value === "number" ? model?.displayName() : placeholder}
         </SelectButton>
       </FormField>
     ),
-    [id, value, title, placeholder, error, touched, className, style],
+    [id, value, title, placeholder, error, touched, className, style, model],
   );
 
   const renderContent = useCallback(
