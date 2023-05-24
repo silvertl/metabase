@@ -4,7 +4,8 @@ import {
   isRestrictivePermission,
 } from "metabase/admin/permissions/utils/graph";
 import {
-  PLUGIN_ADMIN_PERMISSIONS_DATABASE_POST_ACTION,
+  PLUGIN_ADMIN_PERMISSIONS_DATABASE_ACTIONS,
+  PLUGIN_ADMIN_PERMISSIONS_DATABASE_POST_ACTIONS,
   PLUGIN_ADVANCED_PERMISSIONS,
   PLUGIN_FEATURE_LEVEL_PERMISSIONS,
 } from "metabase/plugins";
@@ -82,8 +83,9 @@ const buildAccessPermission = (
             ? DATA_PERMISSION_OPTIONS.noSelfService.value
             : null,
         ),
-      ...PLUGIN_ADMIN_PERMISSIONS_DATABASE_POST_ACTION,
+      ...PLUGIN_ADMIN_PERMISSIONS_DATABASE_POST_ACTIONS,
     },
+    actions: PLUGIN_ADMIN_PERMISSIONS_DATABASE_ACTIONS,
   };
 };
 

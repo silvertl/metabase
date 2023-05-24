@@ -136,10 +136,21 @@ export const saveDataPermissions = createThunkAction(
     const { dataPermissions, dataPermissionsRevision } =
       getState().admin.permissions;
 
+    const extraData =
+      PLUGIN_DATA_PERMISSIONS.permissionsPayloadExtraSelectors.reduce(
+        (data, selector) => {
+          return {
+            ...data,
+            ...selector(getState()),
+          };
+        },
+        {},
+      );
+
     const permissionsGraph = {
       groups: dataPermissions,
       revision: dataPermissionsRevision,
-      ...PLUGIN_DATA_PERMISSIONS.getPermissionsPayloadExtraData(getState()),
+      ...extraData,
     };
 
     return await PermissionsApi.updateGraph(permissionsGraph);
@@ -174,7 +185,8 @@ export const clearSaveError = createAction(CLEAR_SAVE_ERROR);
 
 const savePermission = {
   next: _state => null,
-  throw: (_state, { payload }) => {
+  throw: (_state, { payload, ...rest }) => {
+    console.log(">>>payload", payload, rest);
     return (
       (payload && typeof payload.data === "string"
         ? payload.data

@@ -1,15 +1,16 @@
+import { EnterpriseSharedState } from "metabase-enterprise/shared/reducer";
 import { GroupTableAccessPolicy, UserAttribute } from "metabase-types/api";
-import { State } from "metabase-types/store";
 import { RequestState } from "metabase-types/store/requests";
 
 export type GroupTableAccessPolicyParams = { groupId: string; tableId: string };
 
-export interface SandboxesState extends State {
+export interface SandboxesState extends EnterpriseSharedState {
   requests: {
     plugins: {
       sandboxesPlugin: {
         policies: Record<string, RequestState>;
       };
+      shared: EnterpriseSharedState;
     };
   };
   plugins: {
